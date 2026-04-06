@@ -39,14 +39,14 @@ void randomSkill() {
     else
         survivor.skill = new ShieldSkill();
     startText.setString(
-	"Survivor Skill: " + survivor.skill->name +
-	"\nKiller Skill: " + killer.skill->name
+	"Survivor Skill: " + survivor.skill->name
     );
     startTextTimer = 3.0f;
 }
 int main()
 {   
-    killer.skill = new AttackSkill();
+    AttackSkill* skill = new AttackSkill();
+
     randomSkill();
 
     roundTimer = 50.0f;
@@ -87,7 +87,8 @@ int main()
         // 킬러 스킬
         if (sf::Keyboard::isKeyPressed(killer.skillKey))
         {
-            killer.useSkill(survivor);
+            skill->use(killer, survivor, window);
+    
         }
 
 		float deltaTime = clock.restart().asSeconds();

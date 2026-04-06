@@ -13,9 +13,15 @@ Player::Player(float x, float y, bool killer)
 	attackTime = 0;
 
 	if (isKiller)
-		skillKey = sf::Keyboard::RControl;
+	{
+		skillKey = sf::Keyboard::Slash;
+		speed = 150;
+	}
 	else
+	{
 		skillKey = sf::Keyboard::F;
+		speed = 140;
+	}
 
 	body.setSize(sf::Vector2f(50, 50));
 	body.setPosition(x, y);
@@ -44,9 +50,21 @@ void Player::update(float dt)
 	if (stunned)
 	{
 		stunTimer -= dt;
+		body.setFillColor(sf::Color(100, 100, 255, 120));
 		if (stunTimer <= 0)
+			body.setFillColor(sf::Color(255, 255, 255, 255));
 			stunned = false;
 		return;
+	}
+
+	if (isKiller) {
+		body.setFillColor(sf::Color(255, 255, 0, 120));
+	}
+	else if (shieldTime > 0) {
+		body.setFillColor(sf::Color(100, 255, 100, 120));
+	}
+	else {
+		body.setFillColor(sf::Color(255, 255, 255, 255));
 	}
 
 	move(dt);
@@ -58,17 +76,20 @@ void Player::update(float dt)
 		shieldTime -= dt;
 }
 
-void Player::useSkill(Player& target)
+void Player::useSkill(Player &target)
 {
-	if (!skill) return;
-	if (skillCooldown > 0) return;
-	if (!skill->canUse(*this, target)) return;
+	if (!skill)
+		return;
+	if (skillCooldown > 0)
+		return;
+	if (!skill->canUse(*this, target))
+		return;
 
 	skill->use(*this, target);
 	skillCooldown = skill->cooldown;
 }
 
-void Player::draw(sf::RenderWindow& window)
+void Player::draw(sf::RenderWindow &window)
 {
 	window.draw(body);
 	window.draw(hpBarBack);
@@ -102,4 +123,13 @@ void Player::move(float dt)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			body.move(speed * dt, 0);
 	}
+
+	sf::Vector2f pos = body.getPosition();
+
+    if (pos.x < 0) pos.x = 0;
+    if (pos.y < 0) pos.y = 0;
+    if (pos.x > 1000 - body.getSize().x) pos.x = 1000 - body.getSize().x;
+    if (pos.y > 700 - body.getSize().y) pos.y = 700 - body.getSize().y;
+
+    body.setPosition(pos);
 }

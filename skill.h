@@ -21,11 +21,10 @@ public:
 	void use(Player& user, Player& target) override;
 };
 
-class AttackSkill : public Skill
+class AttackSkill
 {
 public:
-	AttackSkill();
-	void use(Player& user, Player& target) override;
+	void use(Player& user, Player& target, sf::RenderWindow& window);
 
 	float getDistance(sf::Vector2f a, sf::Vector2f b);
 	void dealDamage(Player& target, int damage);
